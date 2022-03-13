@@ -66,56 +66,53 @@ class GameBoard {
 		this.board.forEach((row, x) => {
 			row.forEach((box, y) => {
 				Math.random() <= randomFactor
-					? (this.board[x][y] = 1)
-					: (this.board[x][y] = 0);
+					? (this.board[x][y] = true)
+					: (this.board[x][y] = false);
 			});
 		});
 	}
 
 	nextFrame() {
-		let newBoardArr = [];
+		let nextFrameBoard = [];
 
 		this.board.forEach((row, x) => {
-			newBoardArr.push([]);
-			row.forEach((box, y) => {
+			nextFrameBoard.push([]);
+			row.forEach((val, y) => {
 				let liveNeighborCount = this.getLiveNeighborCount(x, y);
-				let cell = box;
 
-				if (cell == 1) {
+				if (val) {
 					// live cells
-					liveNeighborCount < 2 ? (cell = 0) : false; // underpopulation
-					liveNeighborCount == 2 || liveNeighborCount == 3 ? (cell = 1) : false; // generation
-					liveNeighborCount > 3 ? (cell = 0) : false; // overpopulation
+					liveNeighborCount < 2 || liveNeighborCount > 3 ? (val = !val) : false; // underpopulation
 				} else {
 					// dead cells
-					liveNeighborCount == 3 ? (cell = 1) : false;
+					liveNeighborCount == 3 ? (val = !val) : false;
 				}
 
-				newBoardArr[x].push(cell);
+				nextFrameBoard[x].push(val);
 			});
 		});
 
-		this.board = newBoardArr;
-		return newBoardArr;
+		this.board = nextFrameBoard;
+		return this.board;
 	}
 
 	getLiveNeighborCount(x, y) {
 		let liveNeighborCount = 0;
 
 		if (this.board[x - 1]) {
-			this.board[x - 1][y - 1] == 1 ? liveNeighborCount++ : false;
-			this.board[x - 1][y] == 1 ? liveNeighborCount++ : false;
-			this.board[x - 1][y + 1] == 1 ? liveNeighborCount++ : false;
+			this.board[x - 1][y - 1] == true ? liveNeighborCount++ : false;
+			this.board[x - 1][y] == true ? liveNeighborCount++ : false;
+			this.board[x - 1][y + 1] == true ? liveNeighborCount++ : false;
 		}
 
 		if (this.board[x + 1]) {
-			this.board[x + 1][y - 1] == 1 ? liveNeighborCount++ : false;
-			this.board[x + 1][y] == 1 ? liveNeighborCount++ : false;
-			this.board[x + 1][y + 1] == 1 ? liveNeighborCount++ : false;
+			this.board[x + 1][y - 1] == true ? liveNeighborCount++ : false;
+			this.board[x + 1][y] == true ? liveNeighborCount++ : false;
+			this.board[x + 1][y + 1] == true ? liveNeighborCount++ : false;
 		}
 
-		this.board[x][y - 1] == 1 ? liveNeighborCount++ : false;
-		this.board[x][y + 1] == 1 ? liveNeighborCount++ : false;
+		this.board[x][y - 1] == true ? liveNeighborCount++ : false;
+		this.board[x][y + 1] == true ? liveNeighborCount++ : false;
 
 		return liveNeighborCount;
 	}
