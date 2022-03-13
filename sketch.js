@@ -5,6 +5,8 @@ var canvasHeight = 500;
 var blockSize = 10;
 var speed = 0.1 * 60; // Draw runs at 60 frames / second
 
+var pause = false;
+
 function setup() {
 	let canvas = createCanvas(canvasWidth, canvasHeight);
 	canvas.parent('p5-canvas');
@@ -21,7 +23,8 @@ function setup() {
 function draw() {
 	runEvery(frames, speed, () => {
 		// Generate new board.
-		let updatedBoard = gameBoard.nextFrame();
+		let updatedBoard = gameBoard.board;
+		!pause ? (updatedBoard = gameBoard.nextFrame()) : false;
 
 		// Clear screen.
 		background(200);
@@ -56,6 +59,21 @@ function mouseClicked(event) {
 	}
 }
 
+function play_pause_button() {
+	pause = !pause;
+	pause
+		? (document.querySelector('#play_pause_button').innerHTML = 'Play')
+		: (document.querySelector('#play_pause_button').innerHTML = 'Pause');
+}
+
+function randomize_button() {
+	gameBoard.randomize();
+}
+
+function clear_button() {
+	gameBoard.clearBoard();
+}
+
 class GameBoard {
 	constructor(width, height, randomFactor) {
 		this.width = width;
@@ -74,7 +92,7 @@ class GameBoard {
 		this.randomize(randomFactor);
 	}
 
-	randomize(randomFactor) {
+	randomize(randomFactor = this.randomFactor) {
 		this.board.forEach((row, x) => {
 			row.forEach((box, y) => {
 				Math.random() <= randomFactor
@@ -131,5 +149,16 @@ class GameBoard {
 
 	setCellState(x, y, state = true) {
 		this.board[x][y] = state;
+	}
+
+	clearBoard() {
+		this.board = [];
+		for (let i = 0; i < this.width; i++) {
+			this.board.push([]);
+			for (let j = 0; j < this.height; j++) {
+				this.board[i].push(0);
+			}
+		}
+		return this.board;
 	}
 }
