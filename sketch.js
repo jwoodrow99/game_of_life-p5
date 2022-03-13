@@ -44,6 +44,18 @@ function runEvery(currentFrames, refreshEvery, cb) {
 	currentFrames % refreshEvery == 0 ? cb() : false;
 }
 
+function mouseClicked(event) {
+	console.log();
+	// Check if mouse was clicked on canvas before running function
+	if (mouseX <= canvasWidth && mouseY <= canvasHeight) {
+		gameBoard.setCellState(
+			Math.ceil(mouseX / 10) - 1,
+			Math.ceil(mouseY / 10) - 1,
+			!event.altKey
+		);
+	}
+}
+
 class GameBoard {
 	constructor(width, height, randomFactor) {
 		this.width = width;
@@ -82,7 +94,7 @@ class GameBoard {
 
 				if (val) {
 					// live cells
-					liveNeighborCount < 2 || liveNeighborCount > 3 ? (val = !val) : false; // underpopulation
+					liveNeighborCount < 2 || liveNeighborCount > 3 ? (val = !val) : false;
 				} else {
 					// dead cells
 					liveNeighborCount == 3 ? (val = !val) : false;
@@ -115,5 +127,9 @@ class GameBoard {
 		this.board[x][y + 1] == true ? liveNeighborCount++ : false;
 
 		return liveNeighborCount;
+	}
+
+	setCellState(x, y, state = true) {
+		this.board[x][y] = state;
 	}
 }

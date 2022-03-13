@@ -10,10 +10,43 @@
 
 		<link rel="stylesheet" href="styles.css">
 
-		<title>Game Of Life</title>
+		<title>Conway's Game of Life</title>
 	</head>
 	<body>
-		<h1>Game of Life!</h1>
-		<div id="p5-canvas"></div>
+		<h1>Conway's Game of Life</h1>
+		<p>Implemented by Jack Woodrow! View source at <a target="_blank" href="https://github.com/jwoodrow99/game_of_life-p5">GitHub</a>.</p>
+
+		<p>The game of life is a popular topic in the field of computing and mathematics, and is unique in the fact that there is no formula to determine its outcome, it can only be solved by computation. You can learn more about the Game of Life at <a href="https://en.wikipedia.org/wiki/Conway's_Game_of_Life">Wikipedia</a>.</p>
+
+		<div class="gameSection">
+
+			<div>
+				<div id="p5-canvas"></div>
+			</div>
+
+			<div>
+				<h2>Game Rules:</h2>
+
+				<ul>
+					<li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
+					<li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+					<li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+					<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+				</ul>
+
+				<h2>Controls:</h2>
+
+				<ul>
+					<li>Turn cell on: MouseClick</li>
+					<li>Turn cell off: Alt+MouseClick</li>
+				</ul>
+
+				<!-- <button>Play/Pause</button>
+				<button>Randomize</button>
+				<button>Clear</button> -->
+
+			</div>
+
+		</div>
 	</body>
 </html>
