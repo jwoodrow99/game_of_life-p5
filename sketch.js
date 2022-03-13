@@ -1,97 +1,122 @@
-var board = [];
-var canvas = null;
+var gameBoard = null;
 var frames = 0;
+var canvasWidth = 500;
+var canvasHeight = 500;
+var blockSize = 10;
+var speed = 0.1 * 60; // Draw runs at 60 frames / second
 
 function setup() {
-	canvas = createCanvas(500, 500);
+	let canvas = createCanvas(canvasWidth, canvasHeight);
 	canvas.parent('p5-canvas');
 
-	board = randomizeArray(50, 50, 0.2);
+	gameBoard = new GameBoard(
+		canvasWidth / blockSize,
+		canvasHeight / blockSize,
+		0.2
+	);
 
 	background(200);
 }
 
 function draw() {
-	// set remainder to however many frames you want to wait for before redraw.
-	if (frames % 5 == 0) {
+	runEvery(frames, speed, () => {
 		// Generate new board.
-		board = applyRules(board);
-		console.log(board);
+		let updatedBoard = gameBoard.nextFrame();
 
 		// Clear screen.
 		background(200);
 
 		// Draw squares based off board array values.
-		board.forEach((row, x) => {
+		updatedBoard.forEach((row, x) => {
 			row.forEach((box, y) => {
-				box ? square(x * 10, y * 10, 10) : false;
+				noStroke();
+				fill(color(65));
+				box ? square(x * blockSize, y * blockSize, blockSize) : false;
 			});
 		});
-	}
+	});
 
 	frames++;
 }
 
-// Functions requires how many x and y dimensions to make the array, and what
-// percentage you wish for the squares to be generated at in decimal form.
-function randomizeArray(x, y, randomFactor) {
-	let boardArr = [];
-	for (let i = 0; i < x; i++) {
-		boardArr.push([]);
-		for (let j = 0; j < y; j++) {
-			if (Math.random() <= randomFactor) {
-				boardArr[i].push(1);
-			} else {
-				boardArr[i].push(0);
+// Function to run callback after x frames
+function runEvery(currentFrames, refreshEvery, cb) {
+	currentFrames % refreshEvery == 0 ? cb() : false;
+}
+
+class GameBoard {
+	constructor(width, height, randomFactor) {
+		this.width = width;
+		this.height = height;
+		this.randomFactor = randomFactor;
+		this.board = [];
+
+		// Generate array for board
+		for (let i = 0; i < this.width; i++) {
+			this.board.push([]);
+			for (let j = 0; j < this.height; j++) {
+				this.board[i].push(null);
 			}
 		}
+
+		this.randomize(randomFactor);
 	}
-	return boardArr;
-}
 
-function applyRules(arr) {
-	let newBoardArr = [];
-
-	arr.forEach((row, x) => {
-		newBoardArr.push([]);
-		row.forEach((box, y) => {
-			let liveNegibourCount = getNegibours(arr, x, y);
-			let cell = box;
-
-			if (cell == 1) {
-				// live cells
-				liveNegibourCount < 2 ? (cell = 0) : false; // underpopulation
-				liveNegibourCount == 2 || liveNegibourCount == 3 ? (cell = 1) : false; // generation
-				liveNegibourCount > 3 ? (cell = 0) : false; // overpopulation
-			} else {
-				// dead cells
-				liveNegibourCount == 3 ? (cell = 1) : false;
-			}
-
-			newBoardArr[x].push(cell);
+	randomize(randomFactor) {
+		this.board.forEach((row, x) => {
+			row.forEach((box, y) => {
+				Math.random() <= randomFactor
+					? (this.board[x][y] = 1)
+					: (this.board[x][y] = 0);
+			});
 		});
-	});
-
-	return newBoardArr;
-}
-
-function getNegibours(arr, x, y) {
-	let liveNegibours = 0;
-
-	if (arr[x - 1] != undefined) {
-		arr[x - 1][y - 1] == 1 ? liveNegibours++ : false;
-		arr[x - 1][y] == 1 ? liveNegibours++ : false;
-		arr[x - 1][y + 1] == 1 ? liveNegibours++ : false;
 	}
 
-	if (arr[x + 1] != undefined) {
-		arr[x + 1][y - 1] == 1 ? liveNegibours++ : false;
-		arr[x + 1][y] == 1 ? liveNegibours++ : false;
-		arr[x + 1][y + 1] == 1 ? liveNegibours++ : false;
+	nextFrame() {
+		let newBoardArr = [];
+
+		this.board.forEach((row, x) => {
+			newBoardArr.push([]);
+			row.forEach((box, y) => {
+				let liveNeighborCount = this.getLiveNeighborCount(x, y);
+				let cell = box;
+
+				if (cell == 1) {
+					// live cells
+					liveNeighborCount < 2 ? (cell = 0) : false; // underpopulation
+					liveNeighborCount == 2 || liveNeighborCount == 3 ? (cell = 1) : false; // generation
+					liveNeighborCount > 3 ? (cell = 0) : false; // overpopulation
+				} else {
+					// dead cells
+					liveNeighborCount == 3 ? (cell = 1) : false;
+				}
+
+				newBoardArr[x].push(cell);
+			});
+		});
+
+		this.board = newBoardArr;
+		return newBoardArr;
 	}
 
-	arr[x][y - 1] == 1 ? liveNegibours++ : false;
-	arr[x][y + 1] == 1 ? liveNegibours++ : false;
+	getLiveNeighborCount(x, y) {
+		let liveNeighborCount = 0;
 
-	return liveNegibours;
+		if (this.board[x - 1]) {
+			this.board[x - 1][y - 1] == 1 ? liveNeighborCount++ : false;
+			this.board[x - 1][y] == 1 ? liveNeighborCount++ : false;
+			this.board[x - 1][y + 1] == 1 ? liveNeighborCount++ : false;
+		}
+
+		if (this.board[x + 1]) {
+			this.board[x + 1][y - 1] == 1 ? liveNeighborCount++ : false;
+			this.board[x + 1][y] == 1 ? liveNeighborCount++ : false;
+			this.board[x + 1][y + 1] == 1 ? liveNeighborCount++ : false;
+		}
+
+		this.board[x][y - 1] == 1 ? liveNeighborCount++ : false;
+		this.board[x][y + 1] == 1 ? liveNeighborCount++ : false;
+
+		return liveNeighborCount;
+	}
 }
