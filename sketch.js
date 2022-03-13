@@ -1,5 +1,6 @@
 var board = [];
 var canvas = null;
+var frames = 0;
 
 function setup() {
 	canvas = createCanvas(500, 500);
@@ -11,11 +12,19 @@ function setup() {
 }
 
 function draw() {
-	board.forEach((row, x) => {
-		row.forEach((box, y) => {
-			box ? square(x * 10, y * 10, 10) : false;
+	if (frames % 20 == 0) {
+		board = randomizeArray(50, 50, 0.01);
+
+		background(200);
+
+		board.forEach((row, x) => {
+			row.forEach((box, y) => {
+				box ? square(x * 10, y * 10, 10) : false;
+			});
 		});
-	});
+	}
+
+	frames++;
 }
 
 function randomizeArray(x, y, randomFactor) {
