@@ -2,7 +2,7 @@ var gameBoard = null;
 var frames = 0;
 var canvasWidth = 500;
 var canvasHeight = 500;
-var blockSize = 10;
+var blockSize = 5; // Must be divisible by the canvas height and width
 var speed = 0.1 * 60; // Draw runs at 60 frames / second
 
 var pause = false;
