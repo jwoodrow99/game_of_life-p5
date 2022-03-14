@@ -52,8 +52,8 @@ function mouseClicked(event) {
 	// Check if mouse was clicked on canvas before running function
 	if (mouseX <= canvasWidth && mouseY <= canvasHeight) {
 		gameBoard.setCellState(
-			Math.ceil(mouseX / 10) - 1,
-			Math.ceil(mouseY / 10) - 1,
+			Math.ceil(mouseX / blockSize) - 1,
+			Math.ceil(mouseY / blockSize) - 1,
 			!event.altKey
 		);
 	}
