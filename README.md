@@ -15,6 +15,6 @@ You can learn more about Conway's Game of Life at [Wikipedia](https://en.wikiped
 
 ## Message to visitors
 
-The source code for this project will be cleaned up if anyone takes the time to actually look haha. It is messy due to the fact that i made this in only a few hours with no tutorial, my latest speed code achievement, 2.5 hours!
+My latest speed code achievement, MVP in 2.5 hours!
 
 I look forward to coding this in the J programming language next!
